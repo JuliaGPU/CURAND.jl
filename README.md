@@ -32,11 +32,11 @@ These examples use default random number generator of type `CURAND_RNG_PSEUDO_DE
 rng = create_generator(CURAND_RNG_QUASI_DEFAULT)
 
 # create array of 10 uniformly distributed numbers using custom RNG
-d_a = curand(Float64, rng, 10)
+d_a = curand(rng, Float64, 10)
 
 # create array of 10 normally distributed numbers with mean 0. 
 # and standard deviation .5 using cutsom RNG
-d_a = curandn(Float64, rng, 10, 0, .5)
+d_a = curandn(rng, Float64, 10, 0, .5)
 ```
 
 cuRAND support following RNG types (see cuRAND documentation for details):
