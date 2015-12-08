@@ -69,6 +69,30 @@ set_pseudo_random_generator_seed(rng, 100)
 set_pseudo_random_generator_seed(CURAND._rng, 100)
 ```
 
+## Troubleshooting
+
+#### RNG initialization failure after `CUDArt.device_reset()`
+
+**Problem:** `curand()` fails with `CURAND_STATUS_INITIALIZATION_FAILED (203)` after `device_reset()` or `devices(...) do ... end` from CUDArt.jl
+
+**Solution:** For convenience, CURAND.jl creates a default instance of random number generator and uses it for all short-form functions. Resetting default device invalidates this RNG, so if you plan to reinitialize device in some point, you have to use explicit generator. E.g. instead of:
+
+```
+# somewhere after device_reset() 
+curand(Float64, 10)
+```
+
+you need to use:
+
+```
+# somewhere after device_reset() 
+rng = create_generator()
+curand(rng, Float64, 10)
+```
+
+If error persists, it may be an issue with CUDA version: at the moment it's known that CUDA 7.0 doesn't work, while 6.5 and 7.5 work fine. See [#3](https://github.com/JuliaGPU/CURAND.jl/issues/3) and [this thread](https://groups.google.com/forum/#!topic/julia-users/mJjjTyU7cQ0) for details. 
+
+
 ## TODO
 
 Following functions are not implemented yet: 
