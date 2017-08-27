@@ -1,9 +1,7 @@
 # CURAND.jl
 
-**Build status**: [![][buildbot-julia05-img]][buildbot-julia05-url] [![][buildbot-julia06-img]][buildbot-julia06-url]
+**Build status**: [![][buildbot-julia06-img]][buildbot-julia06-url]
 
-[buildbot-julia05-img]: http://ci.maleadt.net/shields/build.php?builder=CURAND-julia05-x86-64bit&name=julia%200.5
-[buildbot-julia05-url]: http://ci.maleadt.net/shields/url.php?builder=CURAND-julia05-x86-64bit
 [buildbot-julia06-img]: http://ci.maleadt.net/shields/build.php?builder=CURAND-julia06-x86-64bit&name=julia%200.6
 [buildbot-julia06-url]: http://ci.maleadt.net/shields/url.php?builder=CURAND-julia06-x86-64bit
 
@@ -21,16 +19,16 @@ CURAND.jl provides the following list of high-level functions:
 Here are some examples:
 
 ```
-using CUDArt
+using CUDAdrv
 using CURAND
 
 # generate CudaArray of 10 Float64 numbers and copy them to host to view
 d_a = curand(10)
-to_host(d_a)
+typeof(d_a)
 
 # generate array of Float32 numbers
 d_a = curand(Float32, 10)
-to_host(d_a)
+
 ```
 
 These examples use default random number generator of type `CURAND_RNG_PSEUDO_DEFAULT`, you can also create custom generator and use in your calls: 
@@ -41,9 +39,9 @@ rng = create_generator(CURAND_RNG_QUASI_DEFAULT)
 # create array of 10 uniformly distributed numbers using custom RNG
 d_a = curand(rng, Float64, 10)
 
-# create array of 10 normally distributed numbers with mean 0. 
-# and standard deviation .5 using cutsom RNG
-d_a = curandn(rng, Float64, 10, 0, .5)
+# create array of 10 normally distributed numbers with mean 0.0 
+# and standard deviation 0.5 using cutsom RNG
+d_a = curandn(rng, Float64, 10, 0.0, 0.5)
 ```
 
 cuRAND support following RNG types (see cuRAND documentation for details):
@@ -75,30 +73,6 @@ set_pseudo_random_generator_seed(rng, 100)
 # set seed for default RNG
 set_pseudo_random_generator_seed(CURAND._rng, 100)
 ```
-
-## Troubleshooting
-
-#### RNG initialization failure after `CUDArt.device_reset()`
-
-**Problem:** `curand()` fails with `CURAND_STATUS_INITIALIZATION_FAILED (203)` after `device_reset()` or `devices(...) do ... end` from CUDArt.jl
-
-**Solution:** For convenience, CURAND.jl creates a default instance of random number generator and uses it for all short-form functions. Resetting default device invalidates this RNG, so if you plan to reinitialize device in some point, you have to use explicit generator. E.g. instead of:
-
-```
-# somewhere after device_reset() 
-curand(Float64, 10)
-```
-
-you need to use:
-
-```
-# somewhere after device_reset() 
-rng = create_generator()
-curand(rng, Float64, 10)
-```
-
-If error persists, it may be an issue with CUDA version: at the moment it's known that CUDA 7.0 doesn't work, while 6.5 and 7.5 work fine. See [#3](https://github.com/JuliaGPU/CURAND.jl/issues/3) and [this thread](https://groups.google.com/forum/#!topic/julia-users/mJjjTyU7cQ0) for details. 
-
 
 ## TODO
 
