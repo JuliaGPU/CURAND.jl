@@ -4,11 +4,6 @@ The same functionality is available with [CuArrays](https://github.com/JuliaGPU/
 
 # CURAND.jl
 
-**Build status**: [![][buildbot-julia06-img]][buildbot-julia06-url]
-
-[buildbot-julia06-img]: http://ci.maleadt.net/shields/build.php?builder=CURAND-julia06-x86-64bit&name=julia%200.6
-[buildbot-julia06-url]: http://ci.maleadt.net/shields/url.php?builder=CURAND-julia06-x86-64bit
-
 Wrapper for NVidia's cuRAND library. 
 
 ## High-level interface
